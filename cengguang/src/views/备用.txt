@@ -1,0 +1,111 @@
+<template>
+  <!-- <div style="height: 100vh; width: 100vw;" id="map"></div> -->
+  <div style="height: 100%; width: 100%; 
+  background-image: url('src/assets/map.jpg'); background-size: cover;" id="map-1"></div>
+</template>
+
+<script setup>
+import 'ol/ol.css';
+import { onMounted, ref, provide} from 'vue';
+import { Map, View } from 'ol';
+import TileLayer from 'ol/layer/Tile';
+import VectorLayer from 'ol/layer/Vector';
+import { OSM, Vector } from 'ol/source';
+import { LineString, Point } from 'ol/geom';
+import { Style, Stroke, Fill, Circle } from 'ol/style';
+import Feature from 'ol/Feature';
+
+// const map = ref(null);
+// const initialCenter = [113.2235701, 23.11502356];
+// const initialZoom = 17;
+
+// onMounted(() => {
+//   // 创建地图
+//   map.value = new Map({
+//     target: 'map',
+//     layers: [
+//       new TileLayer({
+//         source: new OSM()
+//       }),
+//     ],
+//     view: new View({
+//       projection: 'EPSG:4326',
+//       center: initialCenter,
+//       zoom: initialZoom
+//     })
+//   });
+
+
+  // // 定义轨迹坐标点
+  // const trackCoordinates = [
+  //   [113.215987, 23.1117125],
+  //   [113.225987, 23.1217125],
+  //   [113.235987, 23.1317125],
+  //   // 添加更多坐标点...
+  // ];
+
+  // // 创建轨迹线
+  // const trackLine = new LineString(trackCoordinates);
+  // const trackFeature = new Feature(trackLine);
+  // const trackLayer = new VectorLayer({
+  //   source: new Vector({
+  //     features: [trackFeature]
+  //   }),
+  //   style: new Style({
+  //     stroke: new Stroke({
+  //       color: 'blue',
+  //       width: 2
+  //     })
+  //   })
+  // });
+
+  // // 将轨迹线添加到地图
+  // map.addLayer(trackLayer);
+
+  // // 创建移动点
+  // const movePoint = new Point(trackCoordinates[0]);
+  // const movePointFeature = new Feature(movePoint);
+  // movePointFeature.setStyle(new Style({
+  //   image: new Circle({
+  //     radius: 8,
+  //     fill: new Fill({ color: 'red' }),
+  //     stroke: new Stroke({ color: 'white', width: 2 }),
+  //   }),
+  // }));
+
+  // // 创建移动点图层
+  // const movePointLayer = new VectorLayer({
+  //   source: new Vector({
+  //     features: [movePointFeature],
+  //   }),
+  // });
+
+  // // 将移动点图层添加到地图
+  // map.addLayer(movePointLayer);
+
+  // // 定义移动点的动画函数
+  // const animateMovePoint = () => {
+  //   let index = 0;
+
+  //   const interval = setInterval(() => {
+  //     const currentCoordinate = trackCoordinates[index];
+  //     movePoint.setCoordinates(currentCoordinate);
+  //     index++;
+
+  //     if (index === trackCoordinates.length) {
+  //       clearInterval(interval); // 停止动画
+  //     }
+  //   }, 1000 ); // 每秒移动一次
+  // };
+
+  // // 调用动画函数，使点沿轨迹线移动
+  // animateMovePoint();
+// });
+
+
+// 函数: 还原地图到初始状态
+// const resetMap = () => {
+//   map.value.getView().setCenter(initialCenter);
+//   map.value.getView().setZoom(initialZoom);
+// };
+</script>
