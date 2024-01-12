@@ -5,7 +5,7 @@
 
 <script setup >
 import 'ol/ol.css';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, nextTick, inject } from 'vue';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import ImageLayer from 'ol/layer/Image';
@@ -18,59 +18,36 @@ import proj4 from 'proj4';
 import 'ol'; // Add this line to import OpenLayers
 import Polygon from 'ol/geom/Polygon';
 import Text from 'ol/style/Text';
+import emitter from "@/utils/bus"
+import { register } from "ol/proj/proj4";
+import { useStore } from "../../stores/index";
+
+const store = useStore()
+
 
 const map = ref(null);
 // const initialCenter = [113.2205701, 23.11502356];
 const initialCenter = [113.349, 23.164];
 const initialZoom = 18;
 
+const x2000 = 0;
+const y2000 = 0;
+const h2000 = 0;
+
+var wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs  ';
+var cgcs2000 = '+proj=tmerc +lat_0=0 +lon_0=114 +k=1 +x_0=500000 +y_0=0 +ellps=GRS80 +units=m +no_defs';
+
+
 
 onMounted(() => {
+  proj4.defs("EPSG:4490", "+proj=longlat +ellps=GRS80 +no_defs");
+  register(proj4);
+
+
   // 创建地图
   map.value = new Map({
     target: 'map',
     layers: [
-      // new TileLayer({
-      //   source: new OSM()
-      // }),
-      // new ImageLayer({
-      //   source: new ImageStatic({
-      //     url: 'src/assets/map1.jpg', // 图片路径
-      //     imageExtent: [113.215987, 23.1117125, 113.235987, 23.1317125], 
-      //     // 替换为你图片的实际范围，左下角和右上角的坐标
-      //   }),
-      //   // opacity: 0.5 // 根据需要调整透明度
-      // }),
-
-      // 拼接四个图片
-      // new ImageLayer({
-      //   source: new ImageStatic({
-      //     //rl: 'http://47.236.64.84:8086/map2_x0_y0.png', 
-      //     url: 'src/assets/map2_x0_y0.png',
-      //     imageExtent: [113.209, 23.1052, 113.22, 23.1153],
-      //   }),
-      // }),
-      // new ImageLayer({
-      //   source: new ImageStatic({
-      //     //url: 'http://47.236.64.84:8086/map2_x1_y0.png', 
-      //     url: 'src/assets/map2_x1_y0.png',
-      //     imageExtent: [113.22, 23.1052, 113.231, 23.1153],
-      //   }),
-      // }),
-      // new ImageLayer({
-      //   source: new ImageStatic({
-      //     //url: 'http://47.236.64.84:8086/map2_x0_y1.png', 
-      //     url: 'src/assets/map2_x0_y1.png',
-      //     imageExtent: [113.209, 23.1153, 113.22, 23.1254],
-      //   }),
-      // }),
-      // new ImageLayer({
-      //   source: new ImageStatic({
-      //     //url: 'http://47.236.64.84:8086/map2_x1_y1.png', 
-      //     url: 'src/assets/map2_x1_y1.png',
-      //     imageExtent: [113.22, 23.1153, 113.231, 23.1254],
-      //   }),
-      // }),
       new ImageLayer({
         source: new ImageStatic({
           //url: 'http://47.236.64.84:8086/map2_x1_y1.png', 
@@ -82,6 +59,7 @@ onMounted(() => {
     ],
     view: new View({
       projection: 'EPSG:4326',
+      // projection: 'EPSG:4490',
       center: initialCenter,
       zoom: initialZoom,
       minZoom: 17, // 设置最小缩放级别
@@ -89,6 +67,7 @@ onMounted(() => {
       // extent: [113.209, 23.1052, 113.231, 23.1254], // 设置地图视图的边界范围
     })
   });
+
 
   // // 创建轨迹线
   const trackCoordinates = [
@@ -100,6 +79,8 @@ onMounted(() => {
     [113.216437, 23.1122125],
     // 添加更多坐标点...
   ];
+
+
 
   // const trackLine = new LineString(trackCoordinates);
   // const trackFeature = new Feature(trackLine);
@@ -156,14 +137,12 @@ onMounted(() => {
   // });
   // // 将矩形图层添加到地图
   // map.value.addLayer(rectangleLayer);
-
-
-
-
-
   // 点的创建------------------------------------------------
   // 创建移动点
-  const movePoint = new Point([113.349, 23.164]);
+  // const movePoint = new Point([113.349, 23.164]);
+  const movePoint = new Point(proj4(cgcs2000, wgs84, [433404.633706, 2562975.255210475]));
+  // console.log(proj4(cgcs2000,wgs84,[433404.633706, 2562975.255210475]))
+
   const movePointFeature = new Feature(movePoint);
   movePointFeature.setStyle(new Style({
     image: new Circle({
@@ -185,20 +164,21 @@ onMounted(() => {
 
   // 定义移动点的动画函数
   const animateMovePoint = () => {
-    let index = 0;
+    // let index = 0;
     const interval = setInterval(() => {
-      const currentCoordinate = trackCoordinates[index];
-      // movePoint.setCoordinates(currentCoordinate);
-      movePoint.setCoordinates([113.2206701, 23.11503356]);
-      // index++;
+      // const currentCoordinate = proj4(cgcs2000, wgs84, [store.zuobiao.y, store.zuobiao.x]);
+      // movePoint.setCoordinates(proj4(cgcs2000, wgs84, [store.zuobiao.y, store.zuobiao.x]));
 
-      // if (index === trackCoordinates.length) {
-      //   clearInterval(interval); // 停止动画
-      // }
-    }, 1000); // 每秒移动一次
+      // console.log(store.zuobiao.x)
+      // console.log(store.zuobiao.y)
+      movePoint.setCoordinates(proj4(cgcs2000, wgs84, [parseFloat(store.zuobiao.y), parseFloat(store.zuobiao.x)]));
+      console.log(proj4(cgcs2000, wgs84, [parseFloat(store.zuobiao.y), parseFloat(store.zuobiao.x)]));
+      console.log("实时移动2000坐标" + store.zuobiao.y, store.zuobiao.x);
+
+    }, 1000); // 每1秒移动一次
   };
 
-  // 调用动画函数，使点沿轨迹线移动
+  // 调用动画函数，使点移动
   // animateMovePoint();
 
   // // 模拟实时运动
@@ -216,9 +196,6 @@ onMounted(() => {
 
 });
 
-
-var wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs  ';
-var cgcs2000 = '+proj=tmerc +lat_0=0 +lon_0=114 +k=1 +x_0=500000 +y_0=0 +ellps=GRS80 +units=m +no_defs';
 
 // 将cgcs2000坐标转换成wgs84坐标
 // console.log(proj4(cgcs2000, wgs84, [419685.616, 2557124.796]));
@@ -242,7 +219,7 @@ const resetMap = () => {
   // 还原地图初始状态
   map.value.getView().setCenter(initialCenter);
   map.value.getView().setZoom(initialZoom);
-  console.log("11111111111")
+  console.log("还原地图")
 };
 
 // 输出组件的方法，让外部组件可以调用

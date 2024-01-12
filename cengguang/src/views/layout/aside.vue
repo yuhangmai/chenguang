@@ -34,8 +34,12 @@
 </template>
   
 <script lang="ts" setup>
-import { ref, onMounted, inject, reactive, nextTick } from "vue"
+import { ref, onMounted, inject, reactive, nextTick, provide } from "vue"
 import axios from 'axios'
+import emitter from "@/utils/bus"
+// 使用store
+import { useStore } from "../../stores/index";
+const store = useStore()
 const tableData1 = ref([
     // {
     //     date: 'A1距边坡',
@@ -146,9 +150,13 @@ const tableData4 = [
 ]
 // const $axios = inject("$axios");
 
+
 onMounted(() => {
+    
     let websocket = null;
     let host = document.location.host;
+
+
     //判断当前浏览器是否支持WebSocket
     if ('WebSocket' in window) {
         //连接WebSocket节点
@@ -156,6 +164,8 @@ onMounted(() => {
     } else {
         alert('浏览器不支持webSocket');
     }
+
+
 
     // WebSocket连接建立事件
     websocket.onopen = function (event) {
@@ -167,20 +177,21 @@ onMounted(() => {
 
         // WebSocket消息接收事件
         websocket.onmessage = function (event) {
-            console.log(event.data);
+            //console.log(event.data);
             // tableData1.value[0].name = event.data
             const a = event.data.substring(0, 4);
             nextTick(() => {
                 if (a == '0001') {
-                    tableData1.value[0].name = event.data.substring(5,16);
-                } else if ( a == '0002' ) {
-                    tableData1.value[1].name = event.data.substring(5,15);
-                } else if ( a == '0003' ) {
-                    tableData1.value[2].name = event.data.substring(5,11);
-                }
+                    tableData1.value[0].name = event.data.substring(5, 16);
+                    store.setXData(tableData1.value[0].name)
+                } else if (a == '0002') {
+                    tableData1.value[1].name = event.data.substring(5, 15);
+                    store.setYData(tableData1.value[1].name)
+                } else if (a == '0003') {
+                    tableData1.value[2].name = event.data.substring(5, 11);
+                    store.setHData(tableData1.value[2].name)
 
-                // tableData1.value[0].name = event.data;
-                // tableData1.value[1].name = event.data;
+                }
             });
         };
 
