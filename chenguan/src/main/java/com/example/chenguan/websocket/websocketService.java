@@ -13,13 +13,21 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import javax.websocket.Session;
 import java.util.concurrent.CopyOnWriteArraySet;
-import com.example.chenguan.method.receiveMessage;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-@ServerEndpoint(value = "/webSocket")//主要是将目前的类定义成一个websocket服务器端, 注解的值将被用于监听用户连接的终端访问URL地址,客户端可以通过这个URL来连接到WebSocket服务器端
+import com.example.chenguan.method.receiveMessage;
+import com.example.chenguan.method.receiveMessageTwo;
+
+@ServerEndpoint(value = "/webSocket")
+//主要是将目前的类定义成一个websocket服务器端, 注解的值将被用于监听用户连接的终端访问URL地址,客户端可以通过这个URL来连接到WebSocket服务器端
 @Component
 @EnableScheduling// cron定时任务
 @Data
 public class websocketService {
+
+    private static final ExecutorService threadPool = Executors.newFixedThreadPool(2);
+
     private static final Logger logger = LoggerFactory.getLogger(websocketService.class);
 
     /**
@@ -71,9 +79,26 @@ public class websocketService {
 //        this.sendMessage(JSON.toJSONString(nowOnline));
         System.out.println("websocket连接成功");
 
-        // 调用rtk接收信息函数
-        receiveMessage receiverMessage = new receiveMessage();
-        receiverMessage.start();
+//        // 调用rtk接收信息函数
+//        receiveMessage receiverMessage = new receiveMessage();
+//        receiverMessage.start();
+//
+//        // 调用第二个RTK
+//        receiveMessageTwo receiverMessageTwo = new receiveMessageTwo();
+//        receiverMessageTwo.start();
+        // 使用线程池同时执行 receiveMessage 和 receiveMessageTwo
+        threadPool.submit(() -> {
+            receiveMessage receiverMessage = new receiveMessage();
+            receiverMessage.start();
+        });
+
+        threadPool.submit(() -> {
+            receiveMessageTwo receiverMessageTwo = new receiveMessageTwo();
+            receiverMessageTwo.start();
+        });
+
+//        // 关闭线程池
+//        threadPool.shutdown();
 
     }
 

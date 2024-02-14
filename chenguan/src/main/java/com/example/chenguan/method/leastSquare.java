@@ -95,16 +95,16 @@ public class leastSquare {
         for (int i = 0; i < 5; i++)
         {
             Mx[i] = Ax * time[i] * time[i] + Bx * time[i] + Cx;
-            System.out.println("Mx=" + Mx[i]);
+//            System.out.println("Mx=" + Mx[i]);
 
             minx = minx + (Mx[i] - X[i]) * (Mx[i] - X[i]);
 
             My[i] = Ay * time[i] * time[i] + By * time[i] + Cy;
-            System.out.println("My=" + My[i]);
+//            System.out.println("My=" + My[i]);
             miny = miny + (My[i] - Y[i]) * (My[i] - Y[i]);
 
             Mh[i] = Ah * time[i] * time[i] + Bh * time[i] + Ch;
-            System.out.println("Mh=" + Mh[i]);
+//            System.out.println("Mh=" + Mh[i]);
             minh = minh + (Mh[i] - H[i]) * (Mh[i] - H[i]);
 
 
@@ -117,9 +117,9 @@ public class leastSquare {
         minxyh[1] = miny;
         minxyh[2] = minh;
 
-        System.out.println("minx=" + minx);
-        System.out.println("miny=" + miny);
-        System.out.println("minh=" + minh);
+//        System.out.println("minx=" + minx);
+//        System.out.println("miny=" + miny);
+//        System.out.println("minh=" + minh);
 
         return min;
     }

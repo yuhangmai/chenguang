@@ -8,14 +8,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 
 import static com.example.chenguan.method.leastSquare.leastSquare;
 
-public class receiveMessage {
+// 第二个RTK
+public class receiveMessageTwo {
     private static boolean isRunning = true;
     private static Socket socket;
 
@@ -32,11 +32,10 @@ public class receiveMessage {
 
         try {
             // 创建Socket并连接到服务器的IP地址和端口号
-            socket = new Socket("175.178.227.79", 9901);
-            System.out.println("连接到服务器成功！9901");
+            socket = new Socket("175.178.227.79", 8085);
+//            socket = new Socket("localhost", 8085);
+            System.out.println("连接到服务器成功！8085");
 
-            // 设置超时时间为5秒
-//            socket.setSoTimeout(5000);
 
             OutputStream outputStream = null;
             try {
@@ -53,10 +52,10 @@ public class receiveMessage {
                 throw new RuntimeException(e);
             }
 
-            System.out.println("发送的信息: " + message);
+            System.out.println("8085发送信息" );
 
             // 创建receiveMessage实例并调用接收消息的方法
-            receiveMessage receiver = new receiveMessage();
+            receiveMessageTwo receiver = new receiveMessageTwo();
             receiver.receiveMessages();
 
         } catch (IOException e) {
@@ -71,24 +70,13 @@ public class receiveMessage {
             InputStream inputStream = socket.getInputStream();
             byte[] data = new byte[1024];
             while (isRunning) {
+
+                // 会阻塞，直到有数据
                 int bytesRead = inputStream.read(data);
-//                int bytesRead;
-//                try {
-//                    bytesRead = inputStream.read(data);
-//                    // 在这里处理读取到的数据
-//                } catch (SocketTimeoutException e) {
-//                    // 在5秒内没有读取到数据，执行你需要的操作
-//                    webSocketSet.forEach(c -> {
-//                        try {
-//                            c.sendMessage("0009|");
-//                        } catch (IOException ex) {
-//                            throw new RuntimeException(ex);
-//                        }
-//                    });
-//                    continue;
-//                }
+
                 String message = new String(data, 0, bytesRead, StandardCharsets.UTF_8);
-                System.out.println("9901收到信息");
+                System.out.println("8805接收到的信息: " + message);
+
 
                 // 解析坐标信息
                 String[] coordinates = message.split(",");
@@ -129,25 +117,31 @@ public class receiveMessage {
 //                twoThousand.setTwoThousandY(y1);
 //                twoThousand.setTwoThousandH(Double.parseDouble(gaodu));
 
-                if (data_i < 4) {
+                if (data_i < 4)
+                {
                     data_x[data_i] = x1;
                     data_y[data_i] = y1;
                     data_t[data_i] = time_miao;
                     data_h[data_i] = Double.parseDouble(gaodu);
                     data_i++;
-                } else {
+                }
+                else
+                {
                     int erchengfa = leastSquare(data_t, data_x, data_y, data_h);
-                    if (erchengfa == 1) {
+                    if (erchengfa == 1)
+                    {
                         System.out.println("min=1");
-                    } else {
+                    }
+                    else
+                    {
                         // websock发送信息
                         webSocketSet.forEach(c -> {
                             try {
-                                for (int i = 1; i < data_i; i += 2) {
-                                    c.sendMessage("0001|" + String.valueOf(data_x[i]));
-                                    c.sendMessage("0002|" + String.valueOf(data_y[i]));
-                                    c.sendMessage("0003|" + String.valueOf(data_h[i]));
-//                                    c.sendMessage("0007|rtk1_having_data");
+                                for (int i = 1; i < data_i; i+=2) {
+                                    c.sendMessage("0004|" + String.valueOf(data_x[i]));
+                                    c.sendMessage("0005|" + String.valueOf(data_y[i]));
+                                    c.sendMessage("0006|" + String.valueOf(data_h[i]));
+//                                    c.sendMessage("0008|rtk2_having_data");
                                 }
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -156,22 +150,6 @@ public class receiveMessage {
                     }
                     data_i = 0;
                 }
-
-
-                // websock发送信息
-//                webSocketSet.forEach(c -> {
-//                    try {
-//                        twoThousand.setTwoThousandX(32.111);
-//                        twoThousand.setTwoThousandY(323.232);
-//                        twoThousand.setTwoThousandH(213.321);
-//                        c.sendMessage("0001|" + String.valueOf(twoThousand.getTwoThousandX()));
-//                        c.sendMessage("0002|" + String.valueOf(twoThousand.getTwoThousandY()));
-//                        c.sendMessage("0003|" + String.valueOf(twoThousand.getTwoThousandH()));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                });
-
 
 //                System.out.println("2000x1=" + x1);
 //                System.out.println("2000y1=" + y1);
