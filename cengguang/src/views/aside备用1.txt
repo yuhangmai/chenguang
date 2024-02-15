@@ -184,39 +184,32 @@ onMounted(() => {
     }
 
     // 定时检查是否有数据到达
-    // setInterval(() => {
-    //     const currentTime = Date.now();
-    //     const timeout = 5000; // 5秒
+    setInterval(() => {
+        const currentTime = Date.now();
+        const timeout = 5000; // 5秒
 
-    //     // 检查DTU1
-    //     if (currentTime - lastDataReceivedTimeDTU1 > timeout) {
-    //         console.log("No data received from DTU1 in the last 5 seconds");
-    //         // 执行DTU1相应的逻辑...
-    //         tableData1.value[0].address = "no";
-    //         tableData1.value[1].address = "no";
-    //         tableData1.value[2].address = "no";
-    //         // websocket.close();
-    //         // websocket = new WebSocket("ws://localhost:9090/webSocket");
-    //     }
+        // 检查DTU1
+        if (currentTime - lastDataReceivedTimeDTU1 > timeout) {
+            console.log("No data received from DTU1 in the last 5 seconds");
+            // 执行DTU1相应的逻辑...
+            tableData1.value[0].address = "no";
+            tableData1.value[1].address = "no";
+            tableData1.value[2].address = "no";
+            // websocket.close();
+            // websocket = new WebSocket("ws://localhost:9090/webSocket");
+        }
 
-    //     // 检查DTU2
-    //     if (currentTime - lastDataReceivedTimeDTU2 > timeout) {
-    //         console.log("No data received from DTU2 in the last 5 seconds");
-    //         // 执行DTU2相应的逻辑...
-    //         tableData2.value[0].address = "no";
-    //         tableData2.value[1].address = "no";
-    //         tableData2.value[2].address = "no";
-    //         // websocket.close();
-    //         // websocket = new WebSocket("ws://localhost:9090/webSocket");
-    //     }
-    // }, 5000); // 每5秒检查一次
-
-    // 重连websocket
-    //setInterval(() => {
-    //    websocket.close();
-    //     websocket = new WebSocket("ws://localhost:9090/webSocket");
-    //     console.log("websocket重连")
-    // }, 5000);  // 每5秒检查一次
+        // 检查DTU2
+        if (currentTime - lastDataReceivedTimeDTU2 > timeout) {
+            console.log("No data received from DTU2 in the last 5 seconds");
+            // 执行DTU2相应的逻辑...
+            tableData2.value[0].address = "no";
+            tableData2.value[1].address = "no";
+            tableData2.value[2].address = "no";
+            // websocket.close();
+            // websocket = new WebSocket("ws://localhost:9090/webSocket");
+        }
+    }, 5000); // 每5秒检查一次
 
 
     // WebSocket连接建立事件

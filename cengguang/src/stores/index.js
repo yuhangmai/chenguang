@@ -8,7 +8,12 @@ export const useStore = defineStore('main', {
             x: 0,
             y: 0,
             h: 0,
-        }
+        },
+        zuobiaoTwo : {
+            x: 0,
+            y: 0,
+            h: 0,
+        },
     }),
     actions: {
         setXData(value) {
@@ -19,6 +24,15 @@ export const useStore = defineStore('main', {
         },
         setHData(value) {
             this.zuobiao.h = value
+        },
+        setXTwoData(value) {
+            this.zuobiaoTwo.x = value
+        },
+        setYTwoData(value) {
+            this.zuobiaoTwo.y = value
+        },
+        setHTwoData(value) {
+            this.zuobiaoTwo.h = value
         },
     },
 
